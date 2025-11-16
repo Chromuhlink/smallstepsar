@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Small Steps AR</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image.prod.js"></script>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 80px;
+      color: #FFD700;
+      font-weight: bold;
+      display: none;
+      z-index: 999;
+      text-shadow: 4px 4px 8px rgba(0,0,0,0.8);
+      font-family: Arial, sans-serif;
+      pointer-events: none;
+    }
+
+    @keyframes fadeUp {
+      0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+      }
+      20% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -100%) scale(1);
+        opacity: 0;
+      }
+    }
+
+    .show-message {
+      display: block !important;
+      animation: fadeUp 1.5s ease-out forwards;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="message">+30</div>
+
+  <a-scene
+    mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiError: no; uiScanning: no; filterMinCF: 0.001; filterBeta: 0.01;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-assets>
+      <a-asset-item id="model" src="30-3d-icon.glb"></a-asset-item>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled: false">
+      <a-entity cursor="fuse: false; rayOrigin: mouse" raycaster="objects: .clickable; far: 10000"></a-entity>
+    </a-camera>
+
+    <a-entity mindar-image-target="targetIndex: 0" id="target">
+      <a-entity
+        id="arObject"
+        gltf-model="#model"
+        position="0 0 0"
+        scale="0.01 0.01 0.01"
+        rotation="0 0 0"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear"
+        class="clickable">
+      </a-entity>
+    </a-entity>
+
+  </a-scene>
+
+  <script>
+    let collected = false;
+    let targetVisible = false;
+
+    const message = document.getElementById('message');
+    const target = document.getElementById('target');
+    const arObject = document.getElementById('arObject');
+
+    target.addEventListener('targetFound', () => {
+      targetVisible = true;
+      collected = false;
+      console.log('Target detected - tap the 3D object!');
+    });
+
+    target.addEventListener('targetLost', () => {
+      targetVisible = false;
+      console.log('Target lost');
+    });
+
+    // Tap directly on the 3D object
+    arObject.addEventListener('click', (event) => {
+      event.stopPropagation();
+      console.log('3D object tapped!');
+
+      if (targetVisible && !collected) {
+        collected = true;
+
+        message.classList.remove('show-message');
+        void message.offsetWidth;
+        message.classList.add('show-message');
+
+        setTimeout(() => {
+          message.classList.remove('show-message');
+        }, 1500);
+
+        // Stop the idle rotation and do collect spin
+        arObject.removeAttribute('animation');
+        arObject.setAttribute('animation__collect', {
+          property: 'rotation',
+          to: '0 720 0',
+          dur: 1000,
+          easing: 'easeInOutQuad'
+        });
+
+        arObject.setAttribute('animation__scale', {
+          property: 'scale',
+          to: '0.001 0.001 0.001',
+          dur: 1000,
+          easing: 'easeInQuad'
+        });
+
+        setTimeout(() => {
+          arObject.setAttribute('visible', false);
+        }, 1000);
+
+        setTimeout(() => {
+          arObject.setAttribute('visible', true);
+          arObject.setAttribute('scale', '0.01 0.01 0.01');
+          arObject.setAttribute('rotation', '0 0 0');
+          arObject.removeAttribute('animation__collect');
+          arObject.removeAttribute('animation__scale');
+          // Restore idle rotation
+          arObject.setAttribute('animation', 'property: rotation; to: 0 360 0; loop: true; dur: 4000; easing: linear');
+          collected = false;
+        }, 5000);
+      }
+    });
+  </script>
+</body>
+</html>
