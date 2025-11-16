@@ -10,9 +10,49 @@
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
 
   <style>
+    @import url('https://fonts.cdnfonts.com/css/proxima-nova-2');
+
     body {
       margin: 0;
       overflow: hidden;
+    }
+
+    #app-title {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 32px;
+      color: #2F59A1;
+      font-weight: bold;
+      font-family: 'Proxima Nova', sans-serif;
+      z-index: 1000;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #menu-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      z-index: 1000;
+    }
+
+    #menu-bar svg {
+      width: 100%;
+      height: auto;
+    }
+
+    .menu-btn {
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    .menu-btn:active {
+      transform: scale(0.95);
     }
 
     #message {
@@ -53,6 +93,31 @@
 </head>
 
 <body>
+  <div id="app-title">Small Steps AR</div>
+  <div id="menu-bar">
+    <svg width="400" height="119" viewBox="0 0 400 119" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="119" rx="19" fill="#2F59A1"/>
+      <!-- Home button -->
+      <g class="menu-btn" id="btn-home">
+        <path d="M69.8001 65.05H77.1999V78H69.8001V65.05ZM91.0484 50.4831L74.3988 41.2331C73.8387 40.9223 73.1613 40.9223 72.6012 41.2331L55.9516 50.4831C55.0591 50.979 54.7366 52.1054 55.2334 52.9988C55.5695 53.6058 56.201 53.9212 56.8503 53.9224V76.15C56.8503 77.1717 57.6787 78 58.7003 78H66.1002V63.2C66.1002 62.1783 66.9285 61.35 67.9501 61.35H79.0499C80.0715 61.35 80.8998 62.1783 80.8998 63.2V78H88.2997C89.3213 78 90.1497 77.1717 90.1497 76.15V53.9498C90.7995 53.9491 91.4291 53.6062 91.7666 52.9988C92.2634 52.1054 91.9409 50.979 91.0484 50.4831Z" fill="#BBF6E2"/>
+      </g>
+      <!-- Camera button (highlighted) -->
+      <g class="menu-btn" id="btn-camera">
+        <rect x="137" y="22" width="72" height="75" rx="19" fill="#BBF6E2"/>
+        <path d="M192 47.8333H184.348L183.079 44.0256C182.443 42.1161 180.664 40.8333 178.652 40.8333H168.015C166.003 40.8333 164.223 42.1161 163.59 44.0234L162.318 47.8333H154.667C152.094 47.8333 150 49.9262 150 52.4999V75.8333C150 77.123 151.044 78.1666 152.333 78.1666H194.333C195.623 78.1666 196.667 77.123 196.667 75.8333V52.4999C196.667 49.9262 194.573 47.8333 192 47.8333ZM159.333 59.6368C158.045 59.6368 157 58.592 157 57.3034C157 56.0147 158.045 54.9701 159.333 54.9701C160.622 54.9701 161.667 56.0147 161.667 57.3034C161.667 58.592 160.622 59.6368 159.333 59.6368ZM173.333 71.1666C168.186 71.1666 164 66.9807 164 61.8333C164 56.6869 168.186 52.4999 173.333 52.4999C178.481 52.4999 182.667 56.6869 182.667 61.8333C182.667 66.9807 178.481 71.1666 173.333 71.1666Z" fill="#56B2E5"/>
+        <path d="M173.333 66.5001C175.91 66.5001 178 64.4107 178 61.8334C178 59.2561 175.91 57.1667 173.333 57.1667C170.756 57.1667 168.667 59.2561 168.667 61.8334C168.667 64.4107 170.756 66.5001 173.333 66.5001Z" fill="#56B2E5"/>
+      </g>
+      <!-- Location button -->
+      <g class="menu-btn" id="btn-location">
+        <path d="M252.316 59.425C254.368 59.425 256.031 57.7618 256.031 55.7101C256.031 53.6584 254.368 51.9951 252.316 51.9951C250.264 51.9951 248.601 53.6584 248.601 55.7101C248.601 57.7618 250.264 59.425 252.316 59.425Z" fill="#BBF6E2"/>
+        <path d="M263.381 45.5739C257.279 39.4754 247.353 39.4754 241.251 45.5739C238.296 48.5288 236.667 52.4596 236.667 56.639C236.667 60.8201 238.296 64.7491 241.251 67.704L251.003 77.4558C251.365 77.8186 251.841 78 252.316 78C252.791 78 253.266 77.8186 253.629 77.4558L263.381 67.704C266.336 64.7491 267.965 60.8201 267.965 56.639C267.965 52.4596 266.336 48.5288 263.381 45.5739ZM252.316 63.1401C248.218 63.1401 244.886 59.8079 244.886 55.7102C244.886 51.6125 248.218 48.2803 252.316 48.2803C256.414 48.2803 259.746 51.6125 259.746 55.7102C259.746 59.8079 256.414 63.1401 252.316 63.1401Z" fill="#BBF6E2"/>
+      </g>
+      <!-- Profile button -->
+      <g class="menu-btn" id="btn-profile">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M324.171 79.7303C325.302 79.9109 326.408 80 327.516 80C332.669 80 337.553 78.0114 341.259 74.3039C345.781 69.7804 347.769 63.5635 346.73 57.2111C345.395 49.1606 338.842 42.6051 330.793 41.2704C324.443 40.2304 318.204 42.219 313.705 46.7425C309.208 51.2637 307.218 57.4812 308.28 63.8353C309.615 71.8607 316.148 78.3956 324.171 79.7303ZM316.554 73.0836C316.417 72.9464 316.305 72.8344 316.171 72.7201H316.191V71.7944C316.191 68.0412 319.221 65.0102 322.951 65.0102H332.016C335.768 65.0102 338.796 68.064 338.796 71.7944V72.743C338.727 72.8116 338.661 72.8733 338.592 72.935C338.524 72.999 338.458 73.0607 338.389 73.127L338.32 73.1727C335.293 75.751 331.495 77.175 327.493 77.175C323.492 77.175 319.651 75.751 316.644 73.1498L316.554 73.0836ZM322.363 49.9976C323.675 48.505 325.505 47.6913 327.47 47.6913L327.493 47.7141C327.923 47.7141 328.375 47.737 328.805 47.8284C331.449 48.3244 333.643 50.5188 334.138 53.1634C334.591 55.5817 333.777 57.9795 331.947 59.5842C330.117 61.1682 327.608 61.6643 325.233 60.8963C323.288 60.2631 321.684 58.6585 321.051 56.7134C320.284 54.3179 320.759 51.8082 322.363 49.9976Z" fill="#BBF6E2"/>
+      </g>
+    </svg>
+  </div>
   <div id="message">+30</div>
 
   <a-scene
@@ -150,6 +215,46 @@
           collected = false;
         }, 5000);
       }
+    });
+
+    // Menu button selection
+    const menuButtons = document.querySelectorAll('.menu-btn');
+    let activeButton = document.getElementById('btn-camera');
+
+    menuButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        // Reset previous active button
+        if (activeButton) {
+          const prevRect = activeButton.querySelector('rect[rx="19"]');
+          if (prevRect) prevRect.remove();
+          activeButton.querySelectorAll('path').forEach(path => {
+            path.setAttribute('fill', '#BBF6E2');
+          });
+        }
+
+        // Set new active button
+        activeButton = btn;
+        const paths = btn.querySelectorAll('path');
+
+        if (btn.id !== 'btn-camera') {
+          // Add highlight background
+          const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          const bbox = btn.getBBox();
+          rect.setAttribute('x', bbox.x - 10);
+          rect.setAttribute('y', bbox.y - 10);
+          rect.setAttribute('width', bbox.width + 20);
+          rect.setAttribute('height', bbox.height + 20);
+          rect.setAttribute('rx', '19');
+          rect.setAttribute('fill', '#BBF6E2');
+          btn.insertBefore(rect, btn.firstChild);
+
+          paths.forEach(path => {
+            path.setAttribute('fill', '#56B2E5');
+          });
+        }
+      });
     });
   </script>
 </body>
